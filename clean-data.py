@@ -16,6 +16,7 @@ target_label_codes = {
 
 def normalise(s):
     """Normalise a string for duplicate detection."""
+    s = re.sub(r'https?:[^\s]+', ' ', s)
     return re.sub(r'[^\w#]+', ' ', s.strip().lower())
 
 def transform(reader, writer):
@@ -26,6 +27,10 @@ def transform(reader, writer):
 
         # Filter out uninteresting label codes
         if row['labelCode_1'] not in target_label_codes:
+            continue
+
+        # Filter out retweets
+        if re.match(r'^RT\s', row['message']):
             continue
 
         # Have we already seen this exact message text?
